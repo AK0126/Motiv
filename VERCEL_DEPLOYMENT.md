@@ -66,7 +66,7 @@ To enable authentication from your Vercel domain:
    - After deployment, copy your Vercel URL (e.g., `https://motiv-abc123.vercel.app`)
 
 2. **Update Supabase Configuration:**
-   - Go to your Supabase dashboard: https://supabase.com/dashboard/project/qvprmppaqhdrervbzcxy
+   - Go to your Supabase dashboard: https://supabase.com/dashboard/project/...
    - Navigate to **Authentication** → **URL Configuration**
    - Under "Site URL", set it to your Vercel URL
    - Under "Redirect URLs", add your Vercel URL
