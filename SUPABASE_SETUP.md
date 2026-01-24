@@ -182,7 +182,6 @@ This guide will walk you through setting up the Supabase backend for the Motiv t
 
 1. **Start Your Development Server**
    ```bash
-   cd /Users/akarbowski/Documents/projects/motiv/motiv
    npm run dev
    ```
 
