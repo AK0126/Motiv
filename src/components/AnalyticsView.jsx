@@ -80,9 +80,9 @@ const AnalyticsView = () => {
     <div className="p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header with Date Range Selector */}
-        <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6">
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-4 sm:p-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Analytics</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Analytics</h2>
             <div className="flex flex-wrap gap-2">
               {dateRangePresets.map((preset) => (
                 <button
@@ -92,7 +92,7 @@ const AnalyticsView = () => {
                   className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     selectedRange.label === preset.label
                       ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
                   {preset.label}
@@ -100,7 +100,7 @@ const AnalyticsView = () => {
               ))}
             </div>
           </div>
-          <p className="text-xs sm:text-sm text-gray-600">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
             {format(selectedRange.startDate, 'MMM d, yyyy')} - {format(selectedRange.endDate, 'MMM d, yyyy')}
           </p>
         </div>
@@ -109,13 +109,13 @@ const AnalyticsView = () => {
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-            <span className="ml-3 text-gray-600">Loading analytics...</span>
+            <span className="ml-3 text-gray-600 dark:text-gray-400">Loading analytics...</span>
           </div>
         )}
 
         {/* Error State */}
         {activitiesError && !isLoading && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-6">
             Failed to load analytics data. Please try again.
           </div>
         )}
@@ -126,29 +126,29 @@ const AnalyticsView = () => {
 
         {/* Summary Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">Total Time Logged</div>
-            <div className="text-3xl font-bold text-gray-900">{formatDuration(totalMinutes)}</div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Time Logged</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{formatDuration(totalMinutes)}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">Avg. Per Day</div>
-            <div className="text-3xl font-bold text-gray-900">{formatDuration(avgMinutesPerDay)}</div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg. Per Day</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{formatDuration(avgMinutesPerDay)}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">Days Rated</div>
-            <div className="text-3xl font-bold text-gray-900">{totalDays}</div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Days Rated</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalDays}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm text-gray-600 mb-1">Top Category</div>
-            <div className="text-2xl font-bold text-gray-900 truncate">{mostLoggedCategoryName}</div>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Top Category</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">{mostLoggedCategoryName}</div>
           </div>
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Category Breakdown */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Time by Category</h3>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Time by Category</h3>
             <CategoryBreakdownChart
               categoryTotals={categoryTotals}
               categories={categories}
@@ -156,8 +156,8 @@ const AnalyticsView = () => {
           </div>
 
           {/* Day Quality Distribution */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Day Quality</h3>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Day Quality</h3>
             <DayQualityChart counts={ratingCounts} />
           </div>
         </div>

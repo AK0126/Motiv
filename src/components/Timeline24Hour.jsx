@@ -141,14 +141,14 @@ const Timeline24Hour = ({ activities = [], categories = [], onActivityClick, onT
   }, [resizingActivity]);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
       <div className="flex">
         {/* Time labels column */}
-        <div className="flex-shrink-0 w-16 border-r border-gray-200 bg-gray-50">
+        <div className="flex-shrink-0 w-16 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
           {hourLabels.map((hour) => (
             <div
               key={hour}
-              className="h-16 flex items-start justify-end pr-2 pt-1 text-xs text-gray-500 font-medium border-b border-gray-100"
+              className="h-16 flex items-start justify-end pr-2 pt-1 text-xs text-gray-500 dark:text-gray-400 font-medium border-b border-gray-100 dark:border-gray-800"
             >
               {hour}
             </div>
@@ -157,19 +157,19 @@ const Timeline24Hour = ({ activities = [], categories = [], onActivityClick, onT
 
         {/* Timeline slots - clickable area */}
         <div
-          className="flex-1 relative cursor-pointer hover:bg-gray-50 transition-colors timeline-container"
+          className="flex-1 relative cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors timeline-container"
           onClick={handleTimelineClick}
         >
           {/* Hour dividers */}
           {hourLabels.map((hour) => (
             <div
               key={hour}
-              className="h-16 border-b border-gray-200"
+              className="h-16 border-b border-gray-200 dark:border-gray-700"
             >
               {/* Quarter-hour markers */}
-              <div className="h-4 border-b border-gray-100"></div>
-              <div className="h-4 border-b border-gray-100"></div>
-              <div className="h-4 border-b border-gray-100"></div>
+              <div className="h-4 border-b border-gray-100 dark:border-gray-800"></div>
+              <div className="h-4 border-b border-gray-100 dark:border-gray-800"></div>
+              <div className="h-4 border-b border-gray-100 dark:border-gray-800"></div>
               <div className="h-4"></div>
             </div>
           ))}

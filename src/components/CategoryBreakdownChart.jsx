@@ -18,7 +18,7 @@ const CategoryBreakdownChart = ({ categoryTotals, categories }) => {
 
   if (totalMinutes === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
+      <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
         No activities logged in this period
       </div>
     );
@@ -52,19 +52,19 @@ const CategoryBreakdownChart = ({ categoryTotals, categories }) => {
         {data.map((item, index) => {
           const percentage = ((item.value / totalMinutes) * 100).toFixed(1);
           return (
-            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
               <div className="flex items-center gap-3">
                 <div
                   className="w-4 h-4 rounded"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="font-medium text-gray-900">{item.name}</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">{item.name}</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-semibold text-gray-900">
+                <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                   {formatDuration(item.value)}
                 </div>
-                <div className="text-xs text-gray-500">{percentage}%</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">{percentage}%</div>
               </div>
             </div>
           );

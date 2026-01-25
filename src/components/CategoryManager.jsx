@@ -65,10 +65,10 @@ const CategoryManager = () => {
   return (
     <div className="p-6">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">Categories</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Categories</h2>
               {!isAdding && !editingId && (
                 <button
                   onClick={() => setIsAdding(true)}
@@ -86,13 +86,13 @@ const CategoryManager = () => {
             {isLoading && (
               <div className="flex items-center justify-center py-8">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                <span className="ml-3 text-gray-600">Loading categories...</span>
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Loading categories...</span>
               </div>
             )}
 
             {/* Error State */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-4">
                 Failed to load categories. Please try again.
               </div>
             )}
@@ -100,26 +100,26 @@ const CategoryManager = () => {
             {!isLoading && (
               <>
             {(isAdding || editingId) && (
-              <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                   {editingId ? 'Edit Category' : 'New Category'}
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Category Name
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Work, Exercise, etc."
                       autoFocus
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Color
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -129,7 +129,7 @@ const CategoryManager = () => {
                           type="button"
                           onClick={() => setFormData({ ...formData, color })}
                           className={`w-10 h-10 rounded-md transition-transform ${
-                            formData.color === color ? 'ring-2 ring-gray-900 ring-offset-2 scale-110' : ''
+                            formData.color === color ? 'ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-800 scale-110' : ''
                           }`}
                           style={{ backgroundColor: color }}
                         />
@@ -152,7 +152,7 @@ const CategoryManager = () => {
                       type="button"
                       onClick={handleCancel}
                       disabled={isSaving || isUpdating}
-                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors disabled:opacity-50"
+                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -163,34 +163,34 @@ const CategoryManager = () => {
 
             <div className="space-y-2">
               {categories.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                   No categories yet. Add your first category to get started!
                 </p>
               ) : (
                 categories.map((category) => (
                   <div
                     key={category.id}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+                    className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div
                         className="w-8 h-8 rounded-md"
                         style={{ backgroundColor: category.color }}
                       />
-                      <span className="font-medium text-gray-900">{category.name}</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{category.name}</span>
                     </div>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(category)}
                         disabled={isUpdating || isDeleting}
-                        className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(category.id)}
                         disabled={isDeleting}
-                        className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isDeleting ? 'Deleting...' : 'Delete'}
                       </button>

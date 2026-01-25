@@ -141,21 +141,21 @@ const DayView = ({ date, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-gray-50 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-slideUp">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 p-6">
+        <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {format(date, 'EEEE, MMMM d, yyyy')}
               </h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Total logged: {formatDuration(totalMinutes)}
               </p>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-2xl font-bold"
             >
               ×
             </button>
@@ -168,13 +168,13 @@ const DayView = ({ date, onClose }) => {
           {isLoading && (
             <div className="flex items-center justify-center py-8">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              <span className="ml-3 text-gray-600">Loading...</span>
+              <span className="ml-3 text-gray-600 dark:text-gray-400">Loading...</span>
             </div>
           )}
 
           {/* Error State */}
           {activitiesError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
               Failed to load activities. Please try again.
             </div>
           )}
@@ -191,7 +191,7 @@ const DayView = ({ date, onClose }) => {
 
               {/* Timeline */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Timeline</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Timeline</h3>
                 <Timeline24Hour
                   activities={normalizedActivities}
                   categories={categories}
@@ -207,14 +207,14 @@ const DayView = ({ date, onClose }) => {
         {/* Quick Add Modal - Fixed Position Overlay */}
         {showQuickAdd && (
           <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Add activity at {quickAddTime}
               </h3>
 
               {/* Activity Title Input */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Activity Name
                 </label>
                 <input
@@ -227,17 +227,17 @@ const DayView = ({ date, onClose }) => {
                     }
                   }}
                   placeholder="e.g., Museum, Read Norwegian Wood..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   autoFocus
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   Optional - leave blank to use category name
                 </p>
               </div>
 
               {/* Category Selection */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Category
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -257,7 +257,7 @@ const DayView = ({ date, onClose }) => {
 
               <button
                 onClick={() => setShowQuickAdd(false)}
-                className="w-full px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                className="w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>
@@ -274,24 +274,24 @@ const DayView = ({ date, onClose }) => {
 
           return (
             <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                   Activity Details
                 </h3>
 
                 {/* Activity Title */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Title
                   </label>
-                  <div className="text-gray-900 font-medium">
+                  <div className="text-gray-900 dark:text-gray-100 font-medium">
                     {selectedActivity.title || getCategoryById(categoryId)?.name || 'Untitled'}
                   </div>
                 </div>
 
                 {/* Category */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Category
                   </label>
                   <div
@@ -304,12 +304,12 @@ const DayView = ({ date, onClose }) => {
 
                 {/* Time */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Time
                   </label>
-                  <div className="text-gray-900">
+                  <div className="text-gray-900 dark:text-gray-100">
                     {startTime} - {endTime}
-                    <span className="text-gray-500 text-sm ml-2">
+                    <span className="text-gray-500 dark:text-gray-400 text-sm ml-2">
                       ({formatDuration(calculateDuration(startTime, endTime))})
                     </span>
                   </div>
@@ -326,7 +326,7 @@ const DayView = ({ date, onClose }) => {
                   </button>
                   <button
                     onClick={() => setSelectedActivity(null)}
-                    className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                   >
                     Close
                   </button>

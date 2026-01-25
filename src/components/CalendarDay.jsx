@@ -43,9 +43,9 @@ const CalendarDay = ({
       onClick={handleClick}
       className={`
         relative aspect-square p-2 rounded-lg transition-all
-        ${isCurrentMonthDay ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 text-gray-400'}
-        ${isTodayDay ? 'ring-2 ring-blue-500' : 'border border-gray-200'}
-        hover:border-gray-300 cursor-pointer
+        ${isCurrentMonthDay ? 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700' : 'bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-600'}
+        ${isTodayDay ? 'ring-2 ring-blue-500' : 'border border-gray-200 dark:border-gray-700'}
+        hover:border-gray-300 dark:hover:border-gray-600 cursor-pointer
       `}
       style={bgColor ? {
         backgroundColor: `${bgColor}15`,
@@ -54,7 +54,13 @@ const CalendarDay = ({
       } : {}}
     >
       <div className="flex flex-col h-full">
-        <span className={`text-sm font-medium ${isTodayDay ? 'text-blue-600 font-bold' : ''}`}>
+        <span className={`text-sm font-medium ${
+          isTodayDay
+            ? 'text-blue-600 dark:text-blue-400 font-bold'
+            : isCurrentMonthDay
+              ? 'text-gray-900 dark:text-gray-100'
+              : ''
+        }`}>
           {dateStr}
         </span>
 
