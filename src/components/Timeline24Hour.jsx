@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getHourLabels } from '../utils/timeHelpers';
+import { getHourLabels, calculateDuration } from '../utils/timeHelpers';
 
 const Timeline24Hour = ({ activities = [], categories = [], onActivityClick, onTimelineClick, onActivityResize }) => {
   const hourLabels = getHourLabels();
@@ -183,10 +183,8 @@ const Timeline24Hour = ({ activities = [], categories = [], onActivityClick, onT
               // Use temp end time if this activity is being resized
               const isResizing = resizingActivity?.id === activity.id;
               const endTimeToUse = isResizing ? tempEndTime : activity.endTime;
-              const endMinutes = parseInt(endTimeToUse.split(':')[0]) * 60 + parseInt(endTimeToUse.split(':')[1]);
-
               const topPercent = (startMinutes / (24 * 60)) * 100;
-              const heightPercent = ((endMinutes - startMinutes) / (24 * 60)) * 100;
+              const heightPercent = (calculateDuration(activity.startTime, endTimeToUse) / (24 * 60)) * 100;
 
               return (
                 <div

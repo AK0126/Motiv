@@ -1,4 +1,5 @@
 import { format, subDays, startOfDay, endOfDay, eachDayOfInterval, parseISO } from 'date-fns';
+import { calculateDuration } from '../utils/timeHelpers';
 
 /**
  * Calculate total minutes per category within a date range
@@ -15,9 +16,7 @@ export function calculateCategoryTotals(activities, startDate, endDate) {
   Object.entries(activities).forEach(([dateStr, dayActivities]) => {
     if (dateStr >= startStr && dateStr <= endStr) {
       dayActivities.forEach((activity) => {
-        const startMinutes = parseInt(activity.startTime.split(':')[0]) * 60 + parseInt(activity.startTime.split(':')[1]);
-        const endMinutes = parseInt(activity.endTime.split(':')[0]) * 60 + parseInt(activity.endTime.split(':')[1]);
-        const duration = endMinutes - startMinutes;
+        const duration = calculateDuration(activity.startTime, activity.endTime);
 
         if (!categoryTotals[activity.categoryId]) {
           categoryTotals[activity.categoryId] = 0;
@@ -70,9 +69,7 @@ export function calculateAverageMinutesPerDay(activities, startDate, endDate) {
     if (dateStr >= startStr && dateStr <= endStr && dayActivities.length > 0) {
       daysWithActivities++;
       dayActivities.forEach((activity) => {
-        const startMinutes = parseInt(activity.startTime.split(':')[0]) * 60 + parseInt(activity.startTime.split(':')[1]);
-        const endMinutes = parseInt(activity.endTime.split(':')[0]) * 60 + parseInt(activity.endTime.split(':')[1]);
-        totalMinutes += (endMinutes - startMinutes);
+        totalMinutes += calculateDuration(activity.startTime, activity.endTime);
       });
     }
   });
