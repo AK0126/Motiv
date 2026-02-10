@@ -4,11 +4,17 @@ import { useDailyRatings } from '../hooks/api/useDailyRatings';
 import { useCategories } from '../hooks/api/useCategories';
 import CategoryBreakdownChart from './CategoryBreakdownChart';
 import DayQualityChart from './DayQualityChart';
+import WeeklyTrendsChart from './WeeklyTrendsChart';
+import WeekSelector from './WeekSelector';
 import {
   calculateCategoryTotals,
   getRatingCounts,
   calculateAverageMinutesPerDay,
   getDateRangePresets,
+  getLast4Weeks,
+  groupActivitiesByWeek,
+  prepareWeeklyChartData,
+  calculateWeeklySummary,
 } from '../utils/analyticsHelpers';
 import { formatDuration } from '../utils/timeHelpers';
 import { format } from 'date-fns';
@@ -17,6 +23,8 @@ import { getISODateString } from '../utils/dateHelpers';
 const AnalyticsView = () => {
   const dateRangePresets = getDateRangePresets();
   const [selectedRange, setSelectedRange] = useState(dateRangePresets[0]); // Default to last 7 days
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' or 'weekly'
+  const [selectedWeek, setSelectedWeek] = useState('This Week');
 
   // Fetch data for the selected date range
   const { useActivitiesByDateRange } = useActivities();
@@ -74,6 +82,49 @@ const AnalyticsView = () => {
     ? categories.find(cat => cat.id === mostLoggedCategory[0])?.name
     : 'None';
 
+  // Fetch data for weekly trends (last 4 weeks)
+  const weeks = getLast4Weeks();
+  const oldestWeek = weeks[weeks.length - 1];
+  const newestWeek = weeks[0];
+
+  const weeklyStartDateStr = getISODateString(oldestWeek.startDate);
+  const weeklyEndDateStr = getISODateString(newestWeek.endDate);
+
+  const {
+    data: weeklyActivitiesArray = [],
+    isLoading: weeklyActivitiesLoading
+  } = useActivitiesByDateRange(weeklyStartDateStr, weeklyEndDateStr);
+
+  // Group activities by week
+  const weeklyData = groupActivitiesByWeek(weeklyActivitiesArray, weeks);
+  const chartData = prepareWeeklyChartData(weeklyData, categories);
+
+  // Get data for selected week
+  const selectedWeekData = weeklyData[selectedWeek];
+  const selectedWeekActivities = weeklyActivitiesArray.reduce((acc, activity) => {
+    if (!selectedWeekData) return acc;
+    const activityDate = new Date(activity.date);
+    if (activityDate >= selectedWeekData.startDate && activityDate <= selectedWeekData.endDate) {
+      if (!acc[activity.date]) acc[activity.date] = [];
+      acc[activity.date].push({
+        ...activity,
+        startTime: activity.start_time || activity.startTime,
+        endTime: activity.end_time || activity.endTime,
+        categoryId: activity.category_id || activity.categoryId,
+      });
+    }
+    return acc;
+  }, {});
+
+  const selectedWeekSummary = selectedWeekData
+    ? calculateWeeklySummary(
+        selectedWeekActivities,
+        selectedWeekData.startDate,
+        selectedWeekData.endDate,
+        categories
+      )
+    : null;
+
   const isLoading = activitiesLoading || ratingsLoading || categoriesLoading;
 
   return (
@@ -105,6 +156,34 @@ const AnalyticsView = () => {
           </p>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 mb-6">
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <nav className="flex -mb-px">
+              <button
+                onClick={() => setActiveTab('overview')}
+                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === 'overview'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                }`}
+              >
+                Overview
+              </button>
+              <button
+                onClick={() => setActiveTab('weekly')}
+                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === 'weekly'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                }`}
+              >
+                Weekly Trends
+              </button>
+            </nav>
+          </div>
+        </div>
+
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center py-12">
@@ -121,47 +200,107 @@ const AnalyticsView = () => {
         )}
 
         {/* Content */}
-        {!isLoading && (
+        {!isLoading && activeTab === 'overview' && (
           <>
+            {/* Summary Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Time Logged</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{formatDuration(totalMinutes)}</div>
+              </div>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg. Per Day</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{formatDuration(avgMinutesPerDay)}</div>
+              </div>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Days Rated</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalDays}</div>
+              </div>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+                <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Top Category</div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">{mostLoggedCategoryName}</div>
+              </div>
+            </div>
 
-        {/* Summary Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Time Logged</div>
-            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{formatDuration(totalMinutes)}</div>
-          </div>
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avg. Per Day</div>
-            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{formatDuration(avgMinutesPerDay)}</div>
-          </div>
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Days Rated</div>
-            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalDays}</div>
-          </div>
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Top Category</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">{mostLoggedCategoryName}</div>
-          </div>
-        </div>
+            {/* Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Category Breakdown */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Time by Category</h3>
+                <CategoryBreakdownChart
+                  categoryTotals={categoryTotals}
+                  categories={categories}
+                />
+              </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Category Breakdown */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Time by Category</h3>
-            <CategoryBreakdownChart
-              categoryTotals={categoryTotals}
-              categories={categories}
-            />
-          </div>
+              {/* Day Quality Distribution */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Day Quality</h3>
+                <DayQualityChart counts={ratingCounts} />
+              </div>
+            </div>
+          </>
+        )}
 
-          {/* Day Quality Distribution */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Day Quality</h3>
-            <DayQualityChart counts={ratingCounts} />
-          </div>
-        </div>
-        </>
+        {!isLoading && activeTab === 'weekly' && (
+          <>
+            {/* Week Selector and Summary Stats */}
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6 mb-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Week-over-Week Trends
+                </h3>
+                <WeekSelector
+                  weeks={weeks}
+                  selectedWeek={selectedWeek}
+                  onWeekChange={setSelectedWeek}
+                />
+              </div>
+
+              {/* Selected Week Summary Stats */}
+              {selectedWeekSummary && (
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Time</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      {formatDuration(selectedWeekSummary.totalMinutes)}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Avg. Per Day</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      {formatDuration(selectedWeekSummary.avgMinutesPerDay)}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Days Logged</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      {selectedWeekSummary.daysWithActivities}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Top Category</div>
+                    <div className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
+                      {selectedWeekSummary.topCategory}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Weekly Trends Chart */}
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/50 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Category Breakdown by Week
+              </h3>
+              <WeeklyTrendsChart
+                chartData={chartData}
+                categories={categories}
+                selectedWeek={selectedWeek}
+                onWeekSelect={setSelectedWeek}
+              />
+            </div>
+          </>
         )}
       </div>
     </div>
